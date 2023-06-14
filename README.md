@@ -5,3 +5,4 @@ Scrape is a tool to scrape websites and turn their data into JSON. Like yt-dlp, 
 ## Supported Sites
 - igdb.com (WIP)
 - Steam (WIP)
+- AUR

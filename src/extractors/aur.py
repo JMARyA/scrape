@@ -59,30 +59,30 @@ def aur_package(url: str) -> dict:
                 last_updated = row.find_element(By.TAG_NAME, "td").text
                 info["last_updated"] = last_updated
 
-        dependencies = []
-        dependency_items = b.find_element(By.XPATH, '//*[@id="pkgdepslist"]')
+    dependencies = []
+    dependency_items = b.find_element(By.XPATH, '//*[@id="pkgdepslist"]')
 
-        for dep in dependency_items.find_elements(By.TAG_NAME, "li"):
-            dep_name = dep.find_element(By.TAG_NAME, "a").text
-            dep_info = dep.find_elements(By.TAG_NAME, "em")[-1].text
-            dependencies.append({"name": dep_name, "info": dep_info})
+    for dep in dependency_items.find_elements(By.TAG_NAME, "li"):
+        dep_name = dep.find_element(By.TAG_NAME, "a").text
+        dep_info = dep.find_elements(By.TAG_NAME, "em")[-1].text
+        dependencies.append({"name": dep_name, "info": dep_info})
 
-        info["dependencies"] = dependencies
+    info["dependencies"] = dependencies
 
-        required_by = []
-        required_by_items = b.find_element(By.XPATH, '//*[@id="pkgreqslist"]')
+    required_by = []
+    required_by_items = b.find_element(By.XPATH, '//*[@id="pkgreqslist"]')
 
-        for req in required_by_items.find_elements(By.TAG_NAME, "li"):
-            req_name = req.find_element(By.TAG_NAME, "a").text
-            req_info = req.find_elements(By.TAG_NAME, "em")[-1].text
-            required_by.append(
-                {
-                    "name": req_name,
-                    "optional": True if req_info == "(optional)" else False,
-                }
-            )
+    for req in required_by_items.find_elements(By.TAG_NAME, "li"):
+        req_name = req.find_element(By.TAG_NAME, "a").text
+        req_info = req.find_elements(By.TAG_NAME, "em")[-1].text
+        required_by.append(
+            {
+                "name": req_name,
+                "optional": True if req_info == "(optional)" else False,
+            }
+        )
 
-        info["required_by"] = required_by
+    info["required_by"] = required_by
 
     sources = []
     for source in b.find_element(By.XPATH, '//*[@id="pkgsrcslist"]').find_elements(
