@@ -37,10 +37,12 @@ def steam_game(url: str) -> dict:
 
     try:
         game_orig_price = b.find_elements(
-            By.XPATH, '//*[@class="discount_original_price"]'
+            By.XPATH,
+            '//*[@class="game_area_purchase_game_wrapper"]/div/div[2]/div/div[1]/div[2]/*[@class="discount_original_price"]',
         )[0].text
         game_discount_price = b.find_elements(
-            By.XPATH, '//*[@class="discount_final_price"]'
+            By.XPATH,
+            '//*[@class="game_area_purchase_game_wrapper"]/div/div[2]/div/div[1]/div[2]/*[@class="discount_final_price"]',
         )[0].text
         game_price = {
             "original_price": game_orig_price,
@@ -48,7 +50,8 @@ def steam_game(url: str) -> dict:
         }
     except:
         game_price = b.find_element(
-            By.XPATH, '//*[@class="game_purchase_price price"]'
+            By.XPATH,
+            '//*[@class="game_area_purchase_game_wrapper"]/div/div[2]/div/*[@class="game_purchase_price price"]',
         ).text
 
     b.quit()
