@@ -1,7 +1,16 @@
 from urllib.parse import urlparse
-import extractors.igdb
 import json
 from rich import print
+import sys
+from extractors import igdb, steam
+
+
+def present(data: dict):
+    if sys.stdout.isatty():
+        print(data)
+    else:
+        sys.stdout.write(json.dumps(data, ensure_ascii=False))
+
 
 def scrape_site(url: str):
     _url = urlparse(url)
@@ -10,6 +19,9 @@ def scrape_site(url: str):
     match host:
         case "www.igdb.com":
             data = igdb.igdb_game(url)
-            print(data)
+            present(data)
+        case "store.steampowered.com":
+            data = steam.steam_game(url)
+            present(data)
         case _:
             print("[red]Error:", "Unknown site")
