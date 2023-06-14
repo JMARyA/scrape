@@ -2,7 +2,7 @@ from urllib.parse import urlparse
 import json
 from rich import print
 import sys
-from extractors import igdb, steam
+from extractors import igdb, steam, aur
 
 
 def present(data: dict):
@@ -22,6 +22,9 @@ def scrape_site(url: str):
             present(data)
         case "store.steampowered.com":
             data = steam.steam_game(url)
+            present(data)
+        case "aur.archlinux.org":
+            data = aur.aur_package(url)
             present(data)
         case _:
             print("[red]Error:", "Unknown site")
