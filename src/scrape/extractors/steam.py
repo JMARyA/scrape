@@ -1,5 +1,4 @@
 from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from datetime import datetime
@@ -28,9 +27,7 @@ def steam_game(url: str, lang: Language) -> dict:
         year = Select(b.find_element(By.XPATH, '//*[@id="ageYear"]'))
         year.select_by_value("1900")
 
-        enter_button = b.find_element(
-            By.XPATH, '//*[@id="view_product_page_btn"]'
-        ).click()
+        b.find_element(By.XPATH, '//*[@id="view_product_page_btn"]').click()
 
         WebDriverWait(b, 5).until(
             EC.presence_of_element_located((By.XPATH, '//*[@id="appHubAppName"]'))

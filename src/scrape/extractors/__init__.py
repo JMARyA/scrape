@@ -2,7 +2,6 @@ from urllib.parse import urlparse
 import json
 from rich import print
 import sys
-import locale
 from . import igdb, steam, aur
 from ..val import Language
 
