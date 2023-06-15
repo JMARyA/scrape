@@ -32,6 +32,7 @@ def steam_game(url: str, lang: Language) -> dict:
         WebDriverWait(b, 5).until(
             EC.presence_of_element_located((By.XPATH, '//*[@id="appHubAppName"]'))
         )
+        b.get(url)
 
     game_name: str = b.find_element(By.XPATH, '//*[@id="appHubAppName"]').text
 
@@ -72,12 +73,25 @@ def steam_game(url: str, lang: Language) -> dict:
             "discount_price": currency(game_discount_price),
         }
     except:
-        game_price = currency(
-            b.find_element(
+        try:
+            game_price = currency(
+                b.find_element(
+                    By.XPATH,
+                    '//*[@class="game_area_purchase_game_wrapper"]/div/div[2]/div/*[@class="game_purchase_price price"]',
+                ).text
+            )
+        except:
+            check_free_price = b.find_element(
                 By.XPATH,
-                '//*[@class="game_area_purchase_game_wrapper"]/div/div[2]/div/*[@class="game_purchase_price price"]',
+                '//*[@class="game_purchase_action"]/div[1]/div[@class="game_purchase_price price"]',
             ).text
-        )
+            match lang:
+                case Language.en_US:
+                    if check_free_price == "Free":
+                        game_price = currency("0.0$")
+                case Language.de_DE:
+                    if check_free_price == "Kostenlos":
+                        game_price = currency("0.0€")
 
     b.quit()
     return {
