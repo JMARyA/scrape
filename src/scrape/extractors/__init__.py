@@ -26,16 +26,16 @@ def scrape_site(url: str):
     host = _url.hostname
 
     match host:
-        case supported_sites.IGDB:
+        case supported_sites.IGDB.value:
             data = igdb.igdb_game(url)
             present(data)
-        case supported_sites.STEAM:
+        case supported_sites.STEAM.value:
             data = steam.steam_game(url, Language.en_US)
             present(data)
-        case supported_sites.AUR:
+        case supported_sites.AUR.value:
             data = aur.aur_package(url)
             present(data)
-        case supported_sites.AMAZON:
+        case supported_sites.AMAZON.value:
             data = amazon.amazon_product(url, Language.en_US)
             present(data)
         case _:
