@@ -2,7 +2,7 @@ from urllib.parse import urlparse
 import json
 from rich import print
 import sys
-from . import igdb, steam, aur
+from . import igdb, steam, aur, amazon
 from ..val import Language
 
 
@@ -26,6 +26,9 @@ def scrape_site(url: str):
             present(data)
         case "aur.archlinux.org":
             data = aur.aur_package(url)
+            present(data)
+        case "www.amazon.de":
+            data = amazon.amazon_product(url, Language.en_US)
             present(data)
         case _:
             print("[red]Error:", "Unknown site")
