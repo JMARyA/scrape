@@ -2,7 +2,9 @@ from urllib.parse import urlparse
 import json
 from rich import print
 import sys
-from extractors import igdb, steam, aur
+import locale
+from . import igdb, steam, aur
+from ..val import Language
 
 
 def present(data: dict):
@@ -21,7 +23,7 @@ def scrape_site(url: str):
             data = igdb.igdb_game(url)
             present(data)
         case "store.steampowered.com":
-            data = steam.steam_game(url)
+            data = steam.steam_game(url, Language.en_US)
             present(data)
         case "aur.archlinux.org":
             data = aur.aur_package(url)
