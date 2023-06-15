@@ -1,4 +1,14 @@
 from enum import Enum
+import sys
+from rich import print
+
+
+def printerr(s: str):
+    print("[red]:x: Error:", s, file=sys.stderr)
+
+
+def printwarn(s: str):
+    print("[bold yellow]:warning: Warning:", s, file=sys.stderr)
 
 
 def splitat(s: str, p: str) -> (str, str):

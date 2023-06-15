@@ -2,7 +2,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from datetime import datetime
-from ..val import splitat
+from ..val import splitat, printwarn
 
 
 def igdb_game(url: str) -> dict:
@@ -51,9 +51,9 @@ def igdb_game(url: str) -> dict:
 
     date_string = b.find_element(
         By.XPATH,
-        "/html/body/div[2]/main/div[2]/div[1]/div/div[2]/div[2]/div[1]/div/h2/span/span[1]",
+        '//*[@class="banner-subheading"]/span[1]/span[1]',
     ).text
-    info["release"] = datetime.strptime(date_string, "%b %d, %Y")
+    info["release"] = datetime.strptime(date_string, "%b %d, %Y").strftime("%Y-%m-%d")
 
     releases = []
     releases_html = b.find_element(
@@ -88,29 +88,38 @@ def igdb_game(url: str) -> dict:
         publishers.append(pub.text)
     info["publishers"] = publishers
 
-    ratings = b.find_element(By.XPATH, '//*[@class="gamepage-gauge"]').find_elements(
-        By.TAG_NAME, "text"
-    )
-    member_rating = int(ratings[0].text)
-    critic_rating = int(ratings[2].text)
-    info["ratings"] = ({"member": member_rating, "critic": critic_rating},)
+    try:
+        ratings = b.find_element(
+            By.XPATH, '//*[@class="gamepage-gauge"]'
+        ).find_elements(By.TAG_NAME, "text")
+        member_rating = int(ratings[0].text)
+        critic_rating = int(ratings[2].text)
+        info["ratings"] = ({"member": member_rating, "critic": critic_rating},)
+    except:
+        printwarn("Can not get ratings")
 
-    time_to_beat_data = b.find_element(
-        By.XPATH, '//*[@id="content-page"]/div[2]/aside/table/tbody'
-    )
-    time_to_beat = {}
-    for row in time_to_beat_data.find_elements(By.TAG_NAME, "tr"):
-        time_to_beat[row.find_element(By.TAG_NAME, "th").text[:-1]] = row.find_element(
-            By.TAG_NAME, "td"
-        ).text
-    info["time_to_beat"] = time_to_beat
+    try:
+        time_to_beat_data = b.find_element(
+            By.XPATH, '//*[@id="content-page"]/div[2]/aside/table/tbody'
+        )
+        time_to_beat = {}
+        for row in time_to_beat_data.find_elements(By.TAG_NAME, "tr"):
+            time_to_beat[
+                row.find_element(By.TAG_NAME, "th").text[:-1]
+            ] = row.find_element(By.TAG_NAME, "td").text
+        info["time_to_beat"] = time_to_beat
+    except:
+        printwarn("Can not get time to beat")
 
     b.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-    b.find_element(
-        By.XPATH,
-        '//*[@id="game-storyline"]/span[@class="text-purple cursor-pointer charLimitMore"]',
-    ).click()
-    info["storyline"] = b.find_element(By.XPATH, '//*[@id="game-storyline"]/p').text
+    try:
+        b.find_element(
+            By.XPATH,
+            '//*[@id="game-storyline"]/span[@class="text-purple cursor-pointer charLimitMore"]',
+        ).click()
+        info["storyline"] = b.find_element(By.XPATH, '//*[@id="game-storyline"]/p').text
+    except:
+        printwarn("Can not get storyline")
 
     recommend_div = b.find_element(
         By.XPATH, '//*[@id="content-page"]/div[2]/div[2]/ul/div[2]/div'
@@ -122,7 +131,13 @@ def igdb_game(url: str) -> dict:
     info["recommendations"] = recommended
 
     b.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-    b.find_element(By.XPATH, '//*[@class="language-supports-display"]/button').click()
+    try:
+        b.find_element(
+            By.XPATH, '//*[@class="language-supports-display"]/button'
+        ).click()
+    except:
+        pass
+
     for el in b.find_elements(
         By.XPATH,
         '//*[@class="optimisly-game-extrainfo2"]/div/div/span[@class="text-purple cursor-pointer"]',
@@ -168,25 +183,22 @@ def igdb_game(url: str) -> dict:
             keywords = extra_map[key][0]
             extra_map[key] = keywords.split(", ")
         if key == "Supported Languages":
-            items = extra_map[key]
             support_langs = {"audio": [], "subtitles": [], "interface": []}
-            for item in items:
-                if item == "Audio Subtitles Interface":
-                    continue
-                if item == "Hide":
-                    continue
 
-                lang, support = splitat(item, ": ")
-                support = support.split(" ")
+            lang_html = b.find_element(
+                By.XPATH, '//*[@class="language-supports-display"]/table/tbody'
+            )
 
-                match len(support):
-                    case 2:
-                        support_langs["interface"].append(lang)
-                        support_langs["subtitles"].append(lang)
-                    case 3:
-                        support_langs["interface"].append(lang)
-                        support_langs["subtitles"].append(lang)
-                        support_langs["audio"].append(lang)
+            for lang in lang_html.find_elements(By.TAG_NAME, "tr"):
+                support = lang.find_elements(By.TAG_NAME, "td")
+                lang_name = support[0].text[:-1]
+                if support[1].text == "✓":
+                    support_langs["audio"].append(lang_name)
+                if support[2].text == "✓":
+                    support_langs["subtitles"].append(lang_name)
+                if support[3].text == "✓":
+                    support_langs["interface"].append(lang_name)
+
             extra_map[key] = support_langs
 
     info.update(extra_map)
