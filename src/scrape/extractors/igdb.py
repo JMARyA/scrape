@@ -41,19 +41,26 @@ def igdb_game(url: str) -> dict:
 
     info["url"] = b.find_element(
         By.XPATH,
-        "/html/body/div[2]/main/div[2]/div[1]/div/div[2]/div[2]/div[2]/div[4]/div/input",
+        '//*[@class="gamepage-tabs"]/div[4]/div[@class="input-group"]/input',
     ).get_attribute("value")
 
-    info["description"] = b.find_element(
-        By.XPATH,
-        "/html/body/div[2]/main/div[2]/div[1]/div/div[2]/div[2]/div[2]/div[2]/div[1]",
-    ).text
+    desc = b.find_element(By.XPATH, '//*[@class="gamepage-tabs"]/div[2]/div[1]')
+    try:
+        desc.find_element(By.TAG_NAME, "span").click()
+    except:
+        pass
+    info["description"] = desc.text
 
-    date_string = b.find_element(
-        By.XPATH,
-        '//*[@class="banner-subheading"]/span[1]/span[1]',
-    ).text
-    info["release"] = datetime.strptime(date_string, "%b %d, %Y").strftime("%Y-%m-%d")
+    try:
+        date_string = b.find_element(
+            By.XPATH,
+            '//*[@class="banner-subheading"]/span[1]/span[1]',
+        ).text
+        info["release"] = datetime.strptime(date_string, "%b %d, %Y").strftime(
+            "%Y-%m-%d"
+        )
+    except:
+        printwarn("Unable to get release date")
 
     releases = []
     releases_html = b.find_element(
@@ -71,22 +78,29 @@ def igdb_game(url: str) -> dict:
         )
     info["releases"] = releases
 
-    developers = []
-    developers_html = b.find_element(
-        By.XPATH, '//*[@class="optimisly-game-maininfo"]/div[@itemprop="author"]/span'
-    )
-    for dev in developers_html.find_elements(By.TAG_NAME, "a"):
-        developers.append(dev.text)
-    info["developers"] = developers
+    try:
+        developers = []
+        developers_html = b.find_element(
+            By.XPATH,
+            '//*[@class="optimisly-game-maininfo"]/div[@itemprop="author"]/span',
+        )
+        for dev in developers_html.find_elements(By.TAG_NAME, "a"):
+            developers.append(dev.text)
+        info["developers"] = developers
+    except:
+        printwarn("Unable to get developers")
 
-    publishers = []
-    pub_html = b.find_element(
-        By.XPATH,
-        '//*[@class="optimisly-game-maininfo"]/span[@itemprop="publisher"]/span',
-    )
-    for pub in pub_html.find_elements(By.TAG_NAME, "a"):
-        publishers.append(pub.text)
-    info["publishers"] = publishers
+    try:
+        publishers = []
+        pub_html = b.find_element(
+            By.XPATH,
+            '//*[@class="optimisly-game-maininfo"]/span[@itemprop="publisher"]/span',
+        )
+        for pub in pub_html.find_elements(By.TAG_NAME, "a"):
+            publishers.append(pub.text)
+        info["publishers"] = publishers
+    except:
+        printwarn("Unable to get publishers")
 
     try:
         ratings = b.find_element(
@@ -96,7 +110,7 @@ def igdb_game(url: str) -> dict:
         critic_rating = int(ratings[2].text)
         info["ratings"] = ({"member": member_rating, "critic": critic_rating},)
     except:
-        printwarn("Can not get ratings")
+        printwarn("Unable to get ratings")
 
     try:
         time_to_beat_data = b.find_element(
@@ -109,7 +123,7 @@ def igdb_game(url: str) -> dict:
             ] = row.find_element(By.TAG_NAME, "td").text
         info["time_to_beat"] = time_to_beat
     except:
-        printwarn("Can not get time to beat")
+        printwarn("Unable to get time to beat")
 
     b.execute_script("window.scrollTo(0, document.body.scrollHeight);")
     try:
@@ -119,7 +133,7 @@ def igdb_game(url: str) -> dict:
         ).click()
         info["storyline"] = b.find_element(By.XPATH, '//*[@id="game-storyline"]/p').text
     except:
-        printwarn("Can not get storyline")
+        printwarn("Unable to get storyline")
 
     recommend_div = b.find_element(
         By.XPATH, '//*[@id="content-page"]/div[2]/div[2]/ul/div[2]/div'
@@ -201,6 +215,9 @@ def igdb_game(url: str) -> dict:
 
             extra_map[key] = support_langs
 
+    extra_map = {
+        key.replace(" ", "_").lower(): value for key, value in extra_map.items()
+    }
     info.update(extra_map)
 
     b.quit()
