@@ -17,6 +17,10 @@ def igdb_game(url: str) -> dict:
         By.XPATH, '//*[@class="gamepage-title-wrapper"]/h1'
     ).text[:-4]
 
+    info["id"] = b.find_element(
+        By.XPATH, '//*[@class="optimisly-game-maininfo"]/div[1]/span'
+    ).text
+
     info["cover"] = b.find_element(
         By.XPATH, '//*[@class="gamepage-cover"]/img[1]'
     ).get_attribute("src")

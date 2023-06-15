@@ -1,3 +1,4 @@
+#!python3
 import argparse
 from scrape.extractors import scrape_site
 
