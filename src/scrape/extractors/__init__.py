@@ -4,6 +4,7 @@ from rich import print
 import sys
 from . import igdb, steam, aur, amazon
 from ..val import Language
+from enum import Enum
 
 
 def present(data: dict):
@@ -13,21 +14,28 @@ def present(data: dict):
         sys.stdout.write(json.dumps(data, ensure_ascii=False))
 
 
+class supported_sites(Enum):
+    IGDB = "www.igdb.com"
+    STEAM = "store.steampowered.com"
+    AUR = "aur.archlinux.org"
+    AMAZON = "www.amazon.de"
+
+
 def scrape_site(url: str):
     _url = urlparse(url)
     host = _url.hostname
 
     match host:
-        case "www.igdb.com":
+        case supported_sites.IGDB:
             data = igdb.igdb_game(url)
             present(data)
-        case "store.steampowered.com":
+        case supported_sites.STEAM:
             data = steam.steam_game(url, Language.en_US)
             present(data)
-        case "aur.archlinux.org":
+        case supported_sites.AUR:
             data = aur.aur_package(url)
             present(data)
-        case "www.amazon.de":
+        case supported_sites.AMAZON:
             data = amazon.amazon_product(url, Language.en_US)
             present(data)
         case _:
