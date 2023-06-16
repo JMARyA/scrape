@@ -2,10 +2,10 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from datetime import datetime
-from ..val import splitat, printwarn, printinfo
+from ..val import splitat, printwarn, printinfo, download_media
 
 
-def igdb_game(url: str) -> dict:
+def igdb_game(url: str, download_media_flag: bool) -> dict:
     b = webdriver.Chrome()
     b.get(url)
     printinfo(f"Scraping '{url}'")
@@ -25,6 +25,8 @@ def igdb_game(url: str) -> dict:
     info["cover"] = b.find_element(
         By.XPATH, '//*[@class="gamepage-cover"]/img[1]'
     ).get_attribute("src")
+    if download_media_flag:
+        download_media(info["cover"], f'igdb-{info["id"]}-cover')
 
     genre_and_platform_htmls = b.find_elements(
         By.XPATH, '//*[@class="gamepage-tabs"]/div[2]/p/span[@class="text-semibold"]/..'

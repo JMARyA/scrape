@@ -1,6 +1,8 @@
 from enum import Enum
 import sys
 from rich import print
+from urllib.parse import urlparse
+import requests
 
 
 def printinfo(s: str):
@@ -13,6 +15,19 @@ def printerr(s: str):
 
 def printwarn(s: str):
     print("[bold yellow]:warning: Warning:", s, file=sys.stderr)
+
+
+def download_media(url: str, file_name: str):
+    file_ending = urlparse(url).path.split(".")[-1]
+    file_name = f"{file_name}.{file_ending}"
+
+    response = requests.get(url)
+    if response.status_code == 200:
+        with open(file_name, "wb") as file:
+            file.write(response.content)
+            printinfo(f"Saved '{url}' to '{file_name}'")
+    else:
+        printerr(f"Saving '{url}' to '{file_name}' failed")
 
 
 def splitat(s: str, p: str) -> (str, str):

@@ -19,6 +19,7 @@ class ShowSitesAction(argparse.Action):
 class Config:
     save_ts: bool = False
     language: Language
+    download_media: bool = False
 
 
 def main():
@@ -26,7 +27,12 @@ def main():
     parser.add_argument(
         "--sites", action=ShowSitesAction, nargs=0, help="Show all supported sites"
     )
-    parser.add_argument("-t", action="store_true", help="Store timestamp when scraping")
+    parser.add_argument(
+        "-t", action="store_true", default=False, help="Store timestamp when scraping"
+    )
+    parser.add_argument(
+        "-d", action="store_true", default=False, help="Download any found media urls"
+    )
     parser.add_argument(
         "--lang",
         choices=list(Language._member_names_),
@@ -41,6 +47,9 @@ def main():
 
     if args.t:
         conf.save_ts = True
+
+    if args.d:
+        conf.download_media = True
 
     conf.language = Language.__members__[args.lang]
 

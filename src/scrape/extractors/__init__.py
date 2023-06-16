@@ -37,7 +37,7 @@ def scrape_site(url: str, conf):
     match host:
         case supported_sites.IGDB.value:
             language_ignored_warn(conf)
-            data = igdb.igdb_game(url)
+            data = igdb.igdb_game(url, conf.download_media)
         case supported_sites.STEAM.value:
             data = steam.steam_game(url, conf.language)
         case supported_sites.AUR.value:
