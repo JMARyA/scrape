@@ -2,12 +2,13 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from datetime import datetime
-from ..val import splitat, printwarn
+from ..val import splitat, printwarn, printinfo
 
 
 def igdb_game(url: str) -> dict:
     b = webdriver.Chrome()
     b.get(url)
+    printinfo(f"Scraping '{url}'")
 
     WebDriverWait(b, 1000)
 

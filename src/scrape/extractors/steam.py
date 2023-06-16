@@ -6,7 +6,7 @@ import locale
 from urllib.parse import urlparse, urlencode, urlunparse, parse_qsl
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support import expected_conditions as EC
-from ..val import currency, Language
+from ..val import currency, Language, printinfo
 
 
 def steam_game(url: str, lang: Language) -> dict:
@@ -21,9 +21,11 @@ def steam_game(url: str, lang: Language) -> dict:
     query_string = urlencode(query_params)
     url = urlunparse(url._replace(query=query_string))
 
+    printinfo(f"Scraping '{url}'")
     b.get(url)
 
     if "agecheck" in b.current_url:
+        printinfo("Game is behind age restriction")
         year = Select(b.find_element(By.XPATH, '//*[@id="ageYear"]'))
         year.select_by_value("1900")
 

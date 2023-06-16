@@ -1,9 +1,11 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from ..val import printinfo
 
 
 def aur_package(url: str) -> dict:
     b = webdriver.Chrome()
+    printinfo(f"Scraping '{url}'")
     b.get(url)
 
     head = b.find_element(By.XPATH, '//*[@id="pkgdetails"]/h2').text[17:]
@@ -23,7 +25,7 @@ def aur_package(url: str) -> dict:
                 info["description"] = desc
             case "Upstream URL:":
                 upstream_url = row.find_element(By.TAG_NAME, "a").get_attribute("href")
-                info["upsteam"] = upstream_url
+                info["upstream"] = upstream_url
             case "Keywords:":
                 keywords_items = row.find_elements(By.TAG_NAME, "a")
                 keywords = []

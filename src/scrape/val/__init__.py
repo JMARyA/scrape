@@ -3,6 +3,10 @@ import sys
 from rich import print
 
 
+def printinfo(s: str):
+    print(f"[bold blue]Info:", s, file=sys.stderr)
+
+
 def printerr(s: str):
     print("[red]:x: Error:", s, file=sys.stderr)
 

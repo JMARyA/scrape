@@ -1,7 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from urllib.parse import urlparse, urlencode, urlunparse, parse_qsl
-from ..val import currency, Language
+from ..val import currency, Language, printinfo
 
 
 def amazon_product(url: str, lang: Language) -> dict:
@@ -16,6 +16,7 @@ def amazon_product(url: str, lang: Language) -> dict:
     query_string = urlencode(query_params)
     url = urlunparse(url._replace(query=query_string))
 
+    printinfo(f"Scraping '{url}'")
     b.get(url)
 
     info = {}
