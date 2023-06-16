@@ -31,25 +31,19 @@ def amazon_product(url: str, lang: Language) -> dict:
         ).text.replace(",", ".")
     )
 
-    price_html = b.find_element(
-        By.XPATH, '//*[@id="corePrice_feature_div"]/div[1]/span[1]/span[2]'
+    price_symbol = b.find_element(
+        By.XPATH, '//*[@id="corePrice_feature_div"]//span[@class="a-price-symbol"]'
+    ).text
+    whole = (
+        b.find_element(
+            By.XPATH, '//*[@id="corePrice_feature_div"]//span[@class="a-price-whole"]'
+        )
+        .text.replace(".", "")
+        .replace(",", "")
     )
-
-    match lang:
-        case Language.en_US:
-            price_symbol = price_html.find_element(By.XPATH, "./span[1]").text
-        case Language.de_DE:
-            price_symbol = price_html.find_element(By.XPATH, "./span[3]").text
-    match lang:
-        case Language.en_US:
-            whole = price_html.find_element(By.XPATH, "./span[2]").text
-        case Language.de_DE:
-            whole = price_html.find_element(By.XPATH, "./span[1]").text
-    match lang:
-        case Language.en_US:
-            fraction = price_html.find_element(By.XPATH, "./span[3]").text
-        case Language.de_DE:
-            fraction = price_html.find_element(By.XPATH, "./span[2]").text
+    fraction = b.find_element(
+        By.XPATH, '//*[@id="corePrice_feature_div"]//span[@class="a-price-fraction"]'
+    ).text
     info["price"] = currency(f"{whole}.{fraction}{price_symbol}")
 
     tech_details = {}
