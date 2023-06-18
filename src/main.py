@@ -20,6 +20,7 @@ class Config:
     save_ts: bool = False
     language: Language
     download_media: bool = False
+    http_proxy: str = None
 
 
 def main():
@@ -39,6 +40,11 @@ def main():
         default="en_US",
         help="Desired language to scrape in",
     )
+    parser.add_argument(
+        "--http-proxy",
+        default=None,
+        help="HTTP Proxy",
+    )
     parser.add_argument("url", type=str, help="URL to scrape")
 
     args = parser.parse_args()
@@ -50,6 +56,8 @@ def main():
 
     if args.d:
         conf.download_media = True
+
+    conf.http_proxy = args.http_proxy
 
     conf.language = Language.__members__[args.lang]
 

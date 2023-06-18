@@ -1,11 +1,12 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from urllib.parse import urlparse, urlencode, urlunparse, parse_qsl
-from ..val import currency, Language, printinfo
+from ..val import currency, Language, printinfo, get_webdriver
 
 
-def amazon_product(url: str, lang: Language) -> dict:
-    b = webdriver.Chrome()
+def amazon_product(url: str, conf) -> dict:
+    lang = conf.lang
+    b = get_webdriver(conf)
 
     url = urlparse(url)
     query_params = dict(parse_qsl(url.query))
