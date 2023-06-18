@@ -38,17 +38,17 @@ def scrape_site(url: str, conf):
     match host:
         case supported_sites.IGDB.value:
             language_ignored_warn(conf)
-            data = igdb.igdb_game(url, conf.download_media)
+            data = igdb.igdb_game(url, conf)
         case supported_sites.STEAM.value:
-            data = steam.steam_game(url, conf.language)
+            data = steam.steam_game(url, conf)
         case supported_sites.AUR.value:
             language_ignored_warn(conf)
-            data = aur.aur_package(url)
+            data = aur.aur_package(url, conf)
         case supported_sites.AMAZON.value:
-            data = amazon.amazon_product(url, conf.language)
+            data = amazon.amazon_product(url, conf)
         case supported_sites.POSTMAN.value:
             language_ignored_warn(conf)
-            data = postman.torrent(url, conf.http_proxy)
+            data = postman.torrent(url, conf)
         case _:
             printerr("Unknown site")
             exit(1)

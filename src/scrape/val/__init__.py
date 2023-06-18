@@ -3,6 +3,7 @@ import sys
 from rich import print
 from urllib.parse import urlparse
 import requests
+from seleniumwire import webdriver
 
 
 def printinfo(s: str):
@@ -15,6 +16,16 @@ def printerr(s: str):
 
 def printwarn(s: str):
     print("[bold yellow]:warning: Warning:", s, file=sys.stderr)
+
+
+def get_webdriver(conf):
+    options = {
+        "proxy": {
+            "http": conf.http_proxy,
+            "no_proxy": "localhost,127.0.0.1",
+        }
+    }
+    return webdriver.Chrome(seleniumwire_options=options)
 
 
 def download_media(url: str, file_name: str):

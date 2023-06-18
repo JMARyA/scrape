@@ -6,11 +6,12 @@ import locale
 from urllib.parse import urlparse, urlencode, urlunparse, parse_qsl
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support import expected_conditions as EC
-from ..val import currency, Language, printinfo
+from ..val import currency, Language, printinfo, get_webdriver
 
 
-def steam_game(url: str, lang: Language) -> dict:
-    b = webdriver.Chrome()
+def steam_game(url: str, conf) -> dict:
+    lang = conf.lang
+    b = get_webdriver(conf)
 
     url = urlparse(url)
     query_params = dict(parse_qsl(url.query))

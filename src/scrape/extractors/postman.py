@@ -1,16 +1,10 @@
 from seleniumwire import webdriver
 from selenium.webdriver.common.by import By
-from ..val import printinfo
+from ..val import printinfo, get_webdriver
 
 
-def torrent(url: str, http_proxy: str) -> dict:
-    options = {
-        "proxy": {
-            "http": http_proxy,
-            "no_proxy": "localhost,127.0.0.1",
-        }
-    }
-    b = webdriver.Chrome(seleniumwire_options=options)
+def torrent(url: str, conf) -> dict:
+    b = get_webdriver(conf)
     printinfo(f"Scraping '{url}'")
     b.get(url)
 
