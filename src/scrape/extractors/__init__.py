@@ -2,7 +2,7 @@ from urllib.parse import urlparse
 import json
 from rich import print
 import sys
-from . import igdb, steam, aur, amazon
+from . import igdb, steam, aur, amazon, postman
 from ..val import Language, printerr, printwarn
 from enum import Enum
 import datetime
@@ -21,6 +21,7 @@ class supported_sites(Enum):
     STEAM = "store.steampowered.com"
     AUR = "aur.archlinux.org"
     AMAZON = "www.amazon.de"
+    POSTMAN = "tracker2.postman.i2p"
 
 
 def language_ignored_warn(conf):
@@ -45,6 +46,9 @@ def scrape_site(url: str, conf):
             data = aur.aur_package(url)
         case supported_sites.AMAZON.value:
             data = amazon.amazon_product(url, conf.language)
+        case supported_sites.POSTMAN.value:
+            language_ignored_warn(conf)
+            data = postman.torrent(url)
         case _:
             printerr("Unknown site")
             exit(1)
