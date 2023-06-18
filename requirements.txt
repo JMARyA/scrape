@@ -1,4 +1,5 @@
 rich
 selenium
+selenium-wire
 pytz
 requests

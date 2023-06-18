@@ -48,7 +48,7 @@ def scrape_site(url: str, conf):
             data = amazon.amazon_product(url, conf.language)
         case supported_sites.POSTMAN.value:
             language_ignored_warn(conf)
-            data = postman.torrent(url)
+            data = postman.torrent(url, conf.http_proxy)
         case _:
             printerr("Unknown site")
             exit(1)
