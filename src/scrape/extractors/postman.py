@@ -1,4 +1,3 @@
-from seleniumwire import webdriver
 from selenium.webdriver.common.by import By
 from ..val import (
     printinfo,
@@ -8,8 +7,6 @@ from ..val import (
     escape_unsafe_characters,
     window,
 )
-from datetime import timedelta
-import re
 
 
 def torrent(url: str, conf) -> dict:
@@ -125,7 +122,7 @@ def torrent(url: str, conf) -> dict:
         attachments[attachment_title] = el.get_attribute("src")
         if conf.download_media:
             download_media_raw(
-                img.get_attribute("src"),
+                el.get_attribute("src"),
                 f"{escape_unsafe_characters(attachment_title)}.png",
                 conf,
             )
