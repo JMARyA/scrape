@@ -1,7 +1,7 @@
 #!python3
 import argparse
 from scrape.extractors import scrape_site
-from scrape.val import Language
+from scrape.val import Language, printinfo
 
 
 class ShowSitesAction(argparse.Action):
@@ -11,7 +11,7 @@ class ShowSitesAction(argparse.Action):
 
         print("Supported sites:")
         for site, site_url in supported_sites.__members__.items():
-            print(f"-", f"[red]{site}", "[", f"[purple]{site_url.value}", "]")
+            print("-", f"[red]{site}", "[", f"[purple]{site_url.value}", "]")
 
         parser.exit()
 
@@ -57,7 +57,9 @@ def main():
     if args.d:
         conf.download_media = True
 
-    conf.http_proxy = args.http_proxy
+    if args.http_proxy is not None:
+        printinfo(f"Using HTTP Proxy '{args.http_proxy}'")
+        conf.http_proxy = args.http_proxy
 
     conf.language = Language.__members__[args.lang]
 

@@ -19,7 +19,7 @@ def window(lst: List[int], size: int, stride: int) -> List[List[int]]:
 
 
 def printinfo(s: str):
-    print(f"[bold blue]Info:", s, file=sys.stderr)
+    print("[bold blue]Info:", s, file=sys.stderr)
 
 
 def printerr(s: str):
