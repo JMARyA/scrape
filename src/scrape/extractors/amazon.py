@@ -1,4 +1,3 @@
-from selenium import webdriver
 from selenium.webdriver.common.by import By
 from urllib.parse import urlparse, urlencode, urlunparse, parse_qsl
 from ..val import currency, Language, printinfo, get_webdriver

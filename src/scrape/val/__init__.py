@@ -7,7 +7,7 @@ from seleniumwire import webdriver
 
 
 def printinfo(s: str):
-    print(f"[bold blue]Info:", s, file=sys.stderr)
+    print("[bold blue]Info:", s, file=sys.stderr)
 
 
 def printerr(s: str):
