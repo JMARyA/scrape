@@ -1,6 +1,13 @@
 from seleniumwire import webdriver
 from selenium.webdriver.common.by import By
-from ..val import printinfo, get_webdriver, download_media_raw, parse_duration
+from ..val import (
+    printinfo,
+    get_webdriver,
+    download_media_raw,
+    parse_duration,
+    escape_unsafe_characters,
+    window,
+)
 from datetime import timedelta
 import re
 
@@ -14,7 +21,10 @@ def torrent(url: str, conf) -> dict:
 
     info_table_html = b.find_element(By.XPATH, '//*[@id="td_props"]/tbody')
     for entry in info_table_html.find_elements(By.TAG_NAME, "tr")[:-1]:
-        key_name = entry.find_element(By.XPATH, "./td[1]/b").text
+        try:
+            key_name = entry.find_element(By.XPATH, './td[@class="label"]/b').text
+        except:
+            continue
         content = entry.find_element(By.XPATH, "./td[2]").text
         match key_name:
             case "Name:":
@@ -34,7 +44,12 @@ def torrent(url: str, conf) -> dict:
             case "Size:":
                 info["size"] = content
             case "Owner:":
-                info["owner"] = content
+                if content != "hidden" and content != "none (abandoned torrent)":
+                    info["owner"] = content
+                    level = entry.find_element(
+                        By.XPATH, "./td[2]/span[1]/img[1]"
+                    ).get_attribute("src")
+                    info["owner_level"] = int(level.split("/")[-1][:-4])
             case "Main Languages:":
                 languages_html = entry.find_elements(By.XPATH, "./td[2]/span")
                 languages = []
@@ -101,7 +116,46 @@ def torrent(url: str, conf) -> dict:
         files.append({"file_name": file_name, "file_size": file_size})
     info["files"] = files
 
-    # todo : implement
+    attachments = {}
+    attachment_html = b.find_element(
+        By.XPATH, '//table[@id="td_attachments"]/tbody/tr[1]/td[1]'
+    )
+    for el in attachment_html.find_elements(By.XPATH, "./a/img"):
+        attachment_title = el.get_attribute("title")
+        attachments[attachment_title] = el.get_attribute("src")
+        if conf.download_media:
+            download_media_raw(
+                img.get_attribute("src"),
+                f"{escape_unsafe_characters(attachment_title)}.png",
+                conf,
+            )
+    info["attachments"] = attachments
+
+    comments = []
+    comments_html = b.find_element(By.XPATH, '//*[@id="comments"]/tbody')
+
+    for comment in window(comments_html.find_elements(By.TAG_NAME, "tr"), 2, 2):
+        comment_user = comment[0].find_element(By.XPATH, "./th/b/i").text
+        comment_ts = (
+            comment[0]
+            .find_element(By.XPATH, './th/span[@class="commentdate"]')
+            .text[7:]
+        )
+        comment_content = (
+            comment[1].find_element(By.XPATH, './td/span[@class="commenttext"]').text
+        )
+        comment_content_html = comment[1].find_elements(
+            By.XPATH, './td/span[@class="commenttext"]/a'
+        )
+        for el in comment_content_html:
+            match el.tag_name:
+                case "a":
+                    link = f'[{el.text}]({el.get_attribute("href")})'
+                    comment_content = comment_content.replace(el.text, link)
+        comments.append(
+            {"user": comment_user, "timestamp": comment_ts, "content": comment_content}
+        )
+    info["comments"] = comments
 
     b.quit()
     return info

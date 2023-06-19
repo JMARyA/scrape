@@ -4,8 +4,18 @@ from rich import print
 from urllib.parse import urlparse
 import requests
 from seleniumwire import webdriver
-from datetime import timedelta
+from datetime import timedelta, datetime
 import re
+from typing import List
+
+
+def window(lst: List[int], size: int, stride: int) -> List[List[int]]:
+    if size <= 0 or stride <= 0:
+        raise ValueError("Window size and stride must be greater than zero.")
+    if size > len(lst):
+        raise ValueError("Window size cannot exceed the list length.")
+
+    return [lst[i : i + size] for i in range(0, len(lst), stride)]
 
 
 def printinfo(s: str):
@@ -28,6 +38,11 @@ def get_webdriver(conf):
         }
     }
     return webdriver.Chrome(seleniumwire_options=options)
+
+
+def escape_unsafe_characters(filename):
+    unsafe_chars = r'[<>:"/\\|?*\x00-\x1F\x7F]'
+    return re.sub(unsafe_chars, "_", filename)
 
 
 def download_media(url: str, file_name: str, conf):
@@ -71,6 +86,18 @@ def parse_duration(s: str) -> timedelta:
         minutes = int(s.split(":")[1])
         seconds = int(s.split(":")[2])
         return timedelta(hours=hours, minutes=minutes, seconds=seconds)
+    except:
+        pass
+
+    try:
+        # format : "??:??:??.??"
+        time_duration = datetime.strptime(s, "%H:%M:%S.%f").time()
+        return timedelta(
+            hours=time_duration.hour,
+            minutes=time_duration.minute,
+            seconds=time_duration.second,
+            microseconds=time_duration.microsecond,
+        )
     except:
         pass
 
