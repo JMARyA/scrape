@@ -4,6 +4,8 @@ from rich import print
 from urllib.parse import urlparse
 import requests
 from seleniumwire import webdriver
+from datetime import timedelta
+import re
 
 
 def printinfo(s: str):
@@ -52,6 +54,28 @@ def splitat(s: str, p: str) -> (str, str):
     split_values = s.split(p, 1)
     lang, value = p.join(split_values[:-1]), split_values[-1]
     return (lang, value)
+
+
+def parse_duration(s: str) -> timedelta:
+    try:
+        # format: "? h ? min"
+        hours = int(re.search(r"(\d+)\s*h", s).group(1))
+        minutes = int(re.search(r"(\d+)\s*min", s).group(1))
+        return timedelta(hours=hours, minutes=minutes)
+    except:
+        pass
+
+    try:
+        # format: "??:??:??"
+        hours = int(s.split(":")[0])
+        minutes = int(s.split(":")[1])
+        seconds = int(s.split(":")[2])
+        return timedelta(hours=hours, minutes=minutes, seconds=seconds)
+    except:
+        pass
+
+    # no valid format found
+    return None
 
 
 def currency(v: str) -> dict:
