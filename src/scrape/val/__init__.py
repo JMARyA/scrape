@@ -28,11 +28,18 @@ def get_webdriver(conf):
     return webdriver.Chrome(seleniumwire_options=options)
 
 
-def download_media(url: str, file_name: str):
+def download_media(url: str, file_name: str, conf):
     file_ending = urlparse(url).path.split(".")[-1]
     file_name = f"{file_name}.{file_ending}"
+    download_media_raw(url, file_name, conf)
 
-    response = requests.get(url)
+
+def download_media_raw(url: str, file_name: str, conf):
+    proxy = {}
+    if conf.http_proxy is not None:
+        proxy["http"] = conf.http_proxy
+
+    response = requests.get(url, proxies=proxy)
     if response.status_code == 200:
         with open(file_name, "wb") as file:
             file.write(response.content)
