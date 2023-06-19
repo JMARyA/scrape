@@ -34,23 +34,32 @@ def torrent(url: str, conf) -> dict:
             case "Owner:":
                 info["owner"] = content
             case "Main Languages:":
-                # todo : implement
-                pass
+                languages_html = entry.find_elements(By.XPATH, "./td[2]/span")
+                languages = []
+                for lang in languages_html:
+                    languages.append(lang.get_attribute("title"))
+                info["main_languages"] = languages
             case "Subtitle Languages:":
-                # todo : implement
-                pass
+                languages_html = entry.find_elements(By.XPATH, "./td[2]/span")
+                languages = []
+                for lang in languages_html:
+                    languages.append(lang.get_attribute("title"))
+                info["subtitle_languages"] = languages
             case "Hits / Downloads:":
-                # todo : implement
-                pass
+                (info["hits_amount"], info["downloads_amount"]) = content.split(" / ")
             case "Seeders / Leechers:":
-                # todo : implement
-                pass
+                (info["seeders_amount"], info["leechers_amount"]) = content.split(" / ")
             case "Added / Last Active:":
-                # todo : implement
-                pass
+                (
+                    info["added_timestamp"],
+                    info["last_active_timestamp"],
+                ) = content.split(" / ")
             case "Rating:":
-                # todo : implement
-                pass
+                info["rating"] = float(
+                    entry.find_element(By.XPATH, './td[2]/span[@id="ratingbars"]')
+                    .get_attribute("title")
+                    .split(" ")[0]
+                )
             case "Description:":
                 info["description"] = content
             case "Category:":
@@ -70,18 +79,12 @@ def torrent(url: str, conf) -> dict:
             case "Ripper Info:":
                 # todo : implement
                 pass
-            case "Comment Handling:":
-                # todo : implement
-                pass
             case "Banned:":
-                # todo : implement
-                pass
+                info["banned"] = True if content == "yes" else False
             case "Immutable:":
-                # todo : implement
-                pass
+                info["immutable"] = True if content == "yes" else False
             case "Visible:":
-                # todo : implement
-                pass
+                info["visible"] = True if content == "yes" else False
         print(f"'{key_name}' : '{content}'")
 
     files = []
