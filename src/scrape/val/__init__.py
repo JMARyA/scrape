@@ -53,7 +53,7 @@ def escape_unsafe_characters(filename):
 
 def handle_media_url(url: str, file_name: str, raw_file_name: bool, conf):
     if conf.download_media or conf.embed_media:
-        data = donwload(url, conf)
+        data = download(url, conf)
         if data is None:
             printerr(f"Saving '{url}' to '{file_name}' failed")
             return url
@@ -77,7 +77,7 @@ def to_data_url(file_data):
     return "data:{};base64,{}".format(mime_type, base64_data)
 
 
-def donwload(url: str, conf):
+def download(url: str, conf):
     proxy = {}
     if conf.http_proxy is not None:
         proxy["http"] = conf.http_proxy
