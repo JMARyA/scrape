@@ -8,6 +8,8 @@ from selenium import webdriver as swd
 from datetime import timedelta, datetime
 import re
 from typing import List
+import base64
+import magic
 
 
 def window(lst: List[int], size: int, stride: int) -> List[List[int]]:
@@ -49,24 +51,54 @@ def escape_unsafe_characters(filename):
     return re.sub(unsafe_chars, "_", filename)
 
 
-def download_media(url: str, file_name: str, conf):
-    file_ending = urlparse(url).path.split(".")[-1]
-    file_name = f"{file_name}.{file_ending}"
-    download_media_raw(url, file_name, conf)
+def handle_media_url(url: str, file_name: str, raw_file_name: bool, conf):
+    if conf.download_media or conf.embed_media:
+        data = donwload(url, conf)
+        if data is None:
+            printerr(f"Saving '{url}' to '{file_name}' failed")
+            return url
+        if conf.download_media:
+            if raw_file_name:
+                save_raw(url, data, file_name)
+            else:
+                save(url, file_name, data)
+        if conf.embed_media:
+            return to_data_url(data)
+    return url
 
 
-def download_media_raw(url: str, file_name: str, conf):
+def to_data_url(file_data):
+    base64_data = base64.b64encode(file_data).decode("utf-8")
+
+    mime_type = magic.from_buffer(file_data, mime=True)
+    if mime_type is None:
+        mime_type = "application/octet-stream"
+
+    return "data:{};base64,{}".format(mime_type, base64_data)
+
+
+def donwload(url: str, conf):
     proxy = {}
     if conf.http_proxy is not None:
         proxy["http"] = conf.http_proxy
 
     response = requests.get(url, proxies=proxy)
     if response.status_code == 200:
-        with open(file_name, "wb") as file:
-            file.write(response.content)
-            printinfo(f"Saved '{url}' to '{file_name}'")
+        return response.content
     else:
-        printerr(f"Saving '{url}' to '{file_name}' failed")
+        return None
+
+
+def save_raw(url: str, data, file_name: str):
+    with open(file_name, "wb") as file:
+        file.write(data)
+        printinfo(f"Saved '{url}' to '{file_name}'")
+
+
+def save(url: str, file_name: str, data):
+    file_ending = urlparse(url).path.split(".")[-1]
+    file_name = f"{file_name}.{file_ending}"
+    save_raw(url, data, file_name)
 
 
 def splitat(s: str, p: str) -> (str, str):

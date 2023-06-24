@@ -3,3 +3,4 @@ selenium
 selenium-wire
 pytz
 requests
+python-magic

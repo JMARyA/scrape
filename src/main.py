@@ -21,6 +21,7 @@ class Config:
     language: Language
     download_media: bool = False
     http_proxy: str = None
+    embed_media: bool = False
 
 
 def main():
@@ -45,6 +46,13 @@ def main():
         default=None,
         help="HTTP Proxy",
     )
+    parser.add_argument(
+        "-e",
+        "--embed-media",
+        action="store_true",
+        default=False,
+        help="Embed media urls as data urls",
+    )
     parser.add_argument("url", type=str, help="URL to scrape")
 
     args = parser.parse_args()
@@ -60,6 +68,8 @@ def main():
     if args.http_proxy is not None:
         printinfo(f"Using HTTP Proxy '{args.http_proxy}'")
         conf.http_proxy = args.http_proxy
+
+    conf.embed_media = args.embed_media
 
     conf.language = Language.__members__[args.lang]
 

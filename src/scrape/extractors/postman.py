@@ -2,7 +2,7 @@ from selenium.webdriver.common.by import By
 from ..val import (
     printinfo,
     get_webdriver,
-    download_media_raw,
+    handle_media_url,
     parse_duration,
     escape_unsafe_characters,
     window,
@@ -30,8 +30,9 @@ def torrent(url: str, conf) -> dict:
                 torrent_file_url = entry.find_element(
                     By.XPATH, "./td[2]/a[1]"
                 ).get_attribute("href")
-                if conf.download_media:
-                    download_media_raw(torrent_file_url, content, conf)
+                info["torrent_file"] = handle_media_url(
+                    torrent_file_url, content, True, conf
+                )
             case "Magnet:":
                 info["magnet_url"] = entry.find_element(
                     By.XPATH, "./td[2]/a[1]"
@@ -119,13 +120,13 @@ def torrent(url: str, conf) -> dict:
     )
     for el in attachment_html.find_elements(By.XPATH, "./a/img"):
         attachment_title = el.get_attribute("title")
-        attachments[attachment_title] = el.get_attribute("src")
-        if conf.download_media:
-            download_media_raw(
-                el.get_attribute("src"),
-                f"{escape_unsafe_characters(attachment_title)}.png",
-                conf,
-            )
+        attachment_url = el.get_attribute("src")
+        attachments[attachment_title] = handle_media_url(
+            attachment_url,
+            f"{escape_unsafe_characters(attachment_title)}.png",
+            True,
+            conf,
+        )
     info["attachments"] = attachments
 
     comments = []
