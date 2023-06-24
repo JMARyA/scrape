@@ -10,13 +10,24 @@ import pytz
 
 
 def present(data: dict):
+    """
+    Prints the data dictionary in a human-readable format if stdout is a terminal,
+    otherwise writes the data as a JSON string to stdout.
+
+    Args:
+        data (dict): The data dictionary to be presented.
+    """
     if sys.stdout.isatty():
         print(data)
     else:
         sys.stdout.write(json.dumps(data, ensure_ascii=False))
 
 
-class supported_sites(Enum):
+class SupportedSites(Enum):
+    """
+    Enum class representing supported sites for web scraping.
+    """
+
     IGDB = "www.igdb.com"
     STEAM = "store.steampowered.com"
     AUR = "aur.archlinux.org"
@@ -36,17 +47,17 @@ def scrape_site(url: str, conf):
     ts = datetime.datetime.now(pytz.utc)
 
     match host:
-        case supported_sites.IGDB.value:
+        case SupportedSites.IGDB.value:
             language_ignored_warn(conf)
             data = igdb.igdb_game(url, conf)
-        case supported_sites.STEAM.value:
+        case SupportedSites.STEAM.value:
             data = steam.steam_game(url, conf)
-        case supported_sites.AUR.value:
+        case SupportedSites.AUR.value:
             language_ignored_warn(conf)
             data = aur.aur_package(url, conf)
-        case supported_sites.AMAZON.value:
+        case SupportedSites.AMAZON.value:
             data = amazon.amazon_product(url, conf)
-        case supported_sites.POSTMAN.value:
+        case SupportedSites.POSTMAN.value:
             language_ignored_warn(conf)
             data = postman.torrent(url, conf)
         case _:

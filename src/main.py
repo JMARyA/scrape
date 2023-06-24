@@ -6,11 +6,11 @@ from scrape.val import Language, printinfo
 
 class ShowSitesAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
-        from scrape.extractors import supported_sites
+        from scrape.extractors import SupportedSites
         from rich import print
 
         print("Supported sites:")
-        for site, site_url in supported_sites.__members__.items():
+        for site, site_url in SupportedSites.__members__.items():
             print("-", f"[red]{site}", "[", f"[purple]{site_url.value}", "]")
 
         parser.exit()
