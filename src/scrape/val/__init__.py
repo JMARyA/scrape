@@ -4,6 +4,7 @@ from rich import print
 from urllib.parse import urlparse
 import requests
 from seleniumwire import webdriver
+from selenium import webdriver as swd
 from datetime import timedelta, datetime
 import re
 from typing import List
@@ -37,7 +38,10 @@ def get_webdriver(conf):
             "no_proxy": "localhost,127.0.0.1",
         }
     }
-    return webdriver.Chrome(seleniumwire_options=options)
+    if conf.http_proxy is not None:
+        return webdriver.Chrome(seleniumwire_options=options)
+    else:
+        return swd.Chrome()
 
 
 def escape_unsafe_characters(filename):

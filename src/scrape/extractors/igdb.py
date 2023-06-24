@@ -10,8 +10,6 @@ def igdb_game(url: str, conf) -> dict:
     b.get(url)
     printinfo(f"Scraping '{url}'")
 
-    WebDriverWait(b, 1000)
-
     info = {}
 
     info["name"] = b.find_element(

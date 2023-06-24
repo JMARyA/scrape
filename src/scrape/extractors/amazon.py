@@ -4,7 +4,7 @@ from ..val import currency, Language, printinfo, get_webdriver
 
 
 def amazon_product(url: str, conf) -> dict:
-    lang = conf.lang
+    lang = conf.language
     b = get_webdriver(conf)
 
     url = urlparse(url)
