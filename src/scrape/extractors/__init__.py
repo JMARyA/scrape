@@ -2,7 +2,7 @@ from urllib.parse import urlparse
 import json
 from rich import print
 import sys
-from . import igdb, steam, aur, amazon, postman
+from . import igdb, steam, aur, amazon, postman, anisearch
 from ..val import Language, printerr, printwarn
 from enum import Enum
 import datetime
@@ -33,6 +33,7 @@ class SupportedSites(Enum):
     AUR = "aur.archlinux.org"
     AMAZON = "www.amazon.de"
     POSTMAN = "tracker2.postman.i2p"
+    ANISEARCH = "www.anisearch.com"
 
 
 def language_ignored_warn(conf):
@@ -60,6 +61,13 @@ def scrape_site(url: str, conf):
         case SupportedSites.POSTMAN.value:
             language_ignored_warn(conf)
             data = postman.torrent(url, conf)
+        case SupportedSites.ANISEARCH.value:
+            language_ignored_warn(conf)
+            url_p = urlparse(url)
+            if url_p.path.startswith("/anime/index"):
+                data = anisearch.anime_search(url, conf)
+            else:
+                data = anisearch.anime(url, conf)
         case _:
             printerr("Unknown site")
             exit(1)

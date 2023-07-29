@@ -8,3 +8,4 @@ Scrape is a tool to scrape websites and turn their data into JSON. Like yt-dlp, 
 - Amazon (WIP)
 - AUR
 - Postman
+- Anisearch (WIP)
