@@ -1,6 +1,13 @@
 from selenium.webdriver.common.by import By
 from datetime import datetime
-from ..val import splitat, printwarn, printinfo, handle_media_url, get_webdriver
+from ..val import (
+    splitat,
+    printwarn,
+    printinfo,
+    handle_media_url,
+    get_webdriver,
+    scrollToEnd,
+)
 
 
 def igdb_game(url: str, conf) -> dict:
@@ -127,7 +134,7 @@ def igdb_game(url: str, conf) -> dict:
     except:
         printwarn("Unable to get time to beat")
 
-    b.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+    scrollToEnd(b)
     try:
         b.find_element(
             By.XPATH,
@@ -146,7 +153,7 @@ def igdb_game(url: str, conf) -> dict:
         recommended.append(game_link)
     info["recommendations"] = recommended
 
-    b.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+    scrollToEnd(b)
     try:
         b.find_element(
             By.XPATH, '//*[@class="language-supports-display"]/button'

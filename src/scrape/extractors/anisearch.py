@@ -5,7 +5,14 @@ import locale
 from urllib.parse import urlparse, urlencode, urlunparse, parse_qsl
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support import expected_conditions as EC
-from ..val import currency, Language, printinfo, get_webdriver, handle_media_url
+from ..val import (
+    currency,
+    Language,
+    printinfo,
+    get_webdriver,
+    handle_media_url,
+    scrollToElement,
+)
 
 
 def split_header(element):
@@ -96,7 +103,7 @@ def anime(url: str, conf) -> dict:
             show_more_button = b.find_element(
                 By.XPATH, f'//section[@id="description"]//button[@lang="{desc_lang}"]'
             )
-            b.execute_script("arguments[0].scrollIntoView();", show_more_button)
+            scrollToElement(b, show_more_button)
             show_more_button.click()
 
     descriptions = {}
@@ -125,7 +132,7 @@ def anime(url: str, conf) -> dict:
     show_more_button = b.find_element(
         By.XPATH, '//*[@id="information"]/div/ul/li[2]/div/button'
     )
-    b.execute_script("arguments[0].scrollIntoView();", show_more_button)
+    scrollToElement(b, show_more_button)
     show_more_button.click()
 
     lang_html = b.find_elements(By.XPATH, '//*[@id="information"]/div/ul/li[2]/ul/li')

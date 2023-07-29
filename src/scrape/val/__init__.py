@@ -256,6 +256,20 @@ def parse_duration(s: str) -> timedelta:
     return None
 
 
+def scrollToEnd(b):
+    """
+    Scrolls to the end of the page
+    """
+    b.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+
+
+def scrollToElement(b, e):
+    """
+    Scrolls to the supplied element
+    """
+    b.execute_script("arguments[0].scrollIntoView();", e)
+
+
 def currency(v: str) -> dict:
     """
     Parses a currency value string into a dictionary.
