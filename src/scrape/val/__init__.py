@@ -146,6 +146,8 @@ def to_data_url(file_data):
 
     return "data:{};base64,{}".format(mime_type, base64_data)
 
+def escape_key(s: str) -> str:
+    return s.replace(" ", "_").lower()
 
 def download(url: str, conf):
     """
@@ -249,6 +251,14 @@ def parse_duration(s: str) -> timedelta:
             seconds=time_duration.second,
             microseconds=time_duration.microsecond,
         )
+    except:
+        pass
+
+    try:
+        # format : ??m
+        if s.endswith("m"):
+            (min_d, _) = s.split("m", 2)
+            return timedelta(minutes=float(min_d))
     except:
         pass
 
