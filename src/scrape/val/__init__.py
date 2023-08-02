@@ -146,8 +146,10 @@ def to_data_url(file_data):
 
     return "data:{};base64,{}".format(mime_type, base64_data)
 
+
 def escape_key(s: str) -> str:
     return s.replace(" ", "_").lower()
+
 
 def download(url: str, conf):
     """
@@ -259,6 +261,18 @@ def parse_duration(s: str) -> timedelta:
         if s.endswith("m"):
             (min_d, _) = s.split("m", 2)
             return timedelta(minutes=float(min_d))
+    except:
+        pass
+
+    try:
+        # format : ?h ??m
+        pattern = r"^(\d+)h (\d+)m$"
+        match = re.match(pattern, s)
+        if match:
+            hours = float(match.group(1))
+            minutes = float(match.group(2))
+            return timedelta(hours=hours, minutes=minutes)
+            print(f"Regex match found. Hours: {hours}, Minutes: {minutes}")
     except:
         pass
 

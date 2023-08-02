@@ -12,6 +12,7 @@ from ..val import (
     get_webdriver,
     handle_media_url,
     scrollToElement,
+    escape_key,
 )
 
 
@@ -83,17 +84,17 @@ def anime(url: str, conf) -> dict:
             continue
         key, val = split_header(element)
         if element.get_attribute("class") == "creators":
-            details[key] = val.split(", ")
+            details[escape_key(key)] = val.split(", ")
             continue
         if element.get_attribute("class") == "websites":
             links = []
             links_html = element.find_elements(By.XPATH, "./a")
             for l in links_html:
                 links.append(l.get_attribute("href"))
-            details[key] = links
+            details[escape_key(key)] = links
             continue
 
-        details[key] = val
+        details[escape_key(key)] = val
 
     data["details"] = details
 
