@@ -1,5 +1,6 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.common import exceptions
 from datetime import datetime
 import locale
 from urllib.parse import urlparse, urlencode, urlunparse, parse_qsl
@@ -133,11 +134,14 @@ def anime(url: str, conf) -> dict:
     data["genres"] = genres
     data["tags"] = tags
 
-    show_more_button = b.find_element(
-        By.XPATH, '//*[@id="information"]/div/ul/li[2]/div/button'
-    )
-    scrollToElement(b, show_more_button)
-    show_more_button.click()
+    try:
+        show_more_button = b.find_element(
+            By.XPATH, '//*[@id="information"]/div/ul/li[2]/div/button'
+        )
+        scrollToElement(b, show_more_button)
+        show_more_button.click()
+    except exceptions.NoSuchElementException:
+        pass
 
     lang_html = b.find_elements(By.XPATH, '//*[@id="information"]/div/ul/li[2]/ul/li')
     dubs = {}

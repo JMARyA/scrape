@@ -1,5 +1,6 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium.common import exceptions
 from datetime import datetime
 import locale
 import json
@@ -52,6 +53,16 @@ def tv(url: str, conf) -> dict:
     b.get(url)
 
     data = {}
+
+    try:
+        error_page = b.find_element(
+            By.XPATH, '//*[@id="main"]//div[@class="error_wrapper"]'
+        )
+        data = {"error": "page unavailable"}
+        b.quit()
+        return data
+    except:
+        pass
 
     data["title"] = b.find_element(
         By.XPATH, '//*[@id="original_header"]//div[@class="title ott_true"]/h2/a'
@@ -186,15 +197,19 @@ def season_page(url, conf, b):
                 './/div[@class="episode_title"]//div[@class="date"]/span[@class="date"]',
             ).text
         )
-        episode["runtime_in_minutes"] = (
-            parse_duration(
-                e.find_element(
-                    By.XPATH,
-                    './/div[@class="episode_title"]//div[@class="date"]/span[@class="runtime"]',
-                ).text
-            ).seconds
-            / 60
-        )
+        try:
+            episode["runtime_in_minutes"] = (
+                parse_duration(
+                    e.find_element(
+                        By.XPATH,
+                        './/div[@class="episode_title"]//div[@class="date"]/span[@class="runtime"]',
+                    ).text
+                ).seconds
+                / 60
+            )
+        except exceptions.NoSuchElementException:
+            pass
+
         episode["overview"] = e.find_element(
             By.XPATH, './/div[@class="info"]//div[@class="overview"]/p'
         ).text
