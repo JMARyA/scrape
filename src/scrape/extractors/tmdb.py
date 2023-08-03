@@ -99,9 +99,13 @@ def tv(url: str, conf) -> dict:
         By.XPATH, '//*[@id="original_header"]//div[@class="overview"]'
     ).text
 
-    cover_url = b.find_element(
-        By.XPATH, '//*[@id="original_header"]//div[@class="poster"]//img'
-    ).get_attribute("src")
+    cover_url = (
+        b.find_element(
+            By.XPATH, '//*[@id="original_header"]//div[@class="poster"]//img'
+        )
+        .get_attribute("src")
+        .replace("_filter(blur)", "")
+    )
     data["cover"] = handle_media_url(cover_url, "cover", False, conf)
 
     facts_html = b.find_elements(
