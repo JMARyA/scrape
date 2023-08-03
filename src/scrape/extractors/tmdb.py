@@ -65,10 +65,11 @@ def tv(url: str, conf) -> dict:
         pass
 
     data["title"] = b.find_element(
-        By.XPATH, '//*[@id="original_header"]//div[@class="title ott_true"]/h2/a'
+        By.XPATH, '//*[@id="original_header"]//section[@class="header poster"]/div/h2/a'
     ).text
     data["release_year"] = b.find_element(
-        By.XPATH, '//*[@id="original_header"]//div[@class="title ott_true"]/h2/span'
+        By.XPATH,
+        '//*[@id="original_header"]//section[@class="header poster"]/div/h2/span',
     ).text[1:][:-1]
 
     rating_html = b.find_element(
@@ -157,12 +158,12 @@ def season_page(url, conf, b):
     season = {}
     season["season_number"] = int(url.split("/")[-1])
     season["title"] = b.find_element(
-        By.XPATH, '//*[@id="main"]//div[@class="title ott_true"]//a'
+        By.XPATH, '//*[@id="main"]//span[@class="flex poster"]/span/div/h2/a'
     ).text
     try:
         season["release_year"] = int(
             b.find_element(
-                By.XPATH, '//*[@id="main"]//div[@class="title ott_true"]//span'
+                By.XPATH, '//*[@id="main"]//span[@class="flex poster"]/span/div/h2/span'
             ).text[1:][:-1]
         )
     except:
@@ -193,11 +194,11 @@ def season_page(url, conf, b):
         )
         try:
             episode["release_date"] = parse_date(
-            e.find_element(
-                By.XPATH,
-                './/div[@class="episode_title"]//div[@class="date"]/span[@class="date"]',
-            ).text
-        )
+                e.find_element(
+                    By.XPATH,
+                    './/div[@class="episode_title"]//div[@class="date"]/span[@class="date"]',
+                ).text
+            )
         except exceptions.NoSuchElementException:
             pass
         try:
