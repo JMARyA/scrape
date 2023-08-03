@@ -49,15 +49,18 @@ def anime(url: str, conf) -> dict:
 
     data = {}
 
-    WebDriverWait(b, 5).until(
-        EC.presence_of_element_located(
-            (By.XPATH, '//div[@class="needsclick cmp-root-container"]')
+    try:
+        WebDriverWait(b, 2).until(
+            EC.presence_of_element_located(
+                (By.XPATH, '//div[@class="needsclick cmp-root-container"]')
+            )
         )
-    )
-    accept_cookies = b.execute_script(
-        'return document.querySelector("#top > div.needsclick.cmp-root-container").shadowRoot.querySelector("#consentDialog > div.cmp_ui.cmp_ext_text.cmp_state-stacks > div.cmp_navi > div > div.cmp_mainButtons > div > div.cmp_primaryButtonLine > div > div")'
-    )
-    accept_cookies.click()
+        accept_cookies = b.execute_script(
+            'return document.querySelector("#top > div.needsclick.cmp-root-container").shadowRoot.querySelector("#consentDialog > div.cmp_ui.cmp_ext_text.cmp_state-stacks > div.cmp_navi > div > div.cmp_mainButtons > div > div.cmp_primaryButtonLine > div > div")'
+        )
+        accept_cookies.click()
+    except:
+        pass
 
     anime_info_section = b.find_element(By.XPATH, '//section[@id="information"]')
 

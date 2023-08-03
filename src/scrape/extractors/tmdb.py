@@ -67,11 +67,15 @@ def tv(url: str, conf) -> dict:
     data["user_rating"] = int(rating)
 
     try:
-        data["age_certification"] = b.find_element(By.XPATH, '//*[@id="original_header"]//span[@class="certification"]').text
+        data["age_certification"] = b.find_element(
+            By.XPATH, '//*[@id="original_header"]//span[@class="certification"]'
+        ).text
     except:
         pass
 
-    genres_html = b.find_elements(By.XPATH, '//*[@id="original_header"]//span[@class="genres"]/a')
+    genres_html = b.find_elements(
+        By.XPATH, '//*[@id="original_header"]//span[@class="genres"]/a'
+    )
     data["genres"] = list(
         map(
             lambda x: x.text,
