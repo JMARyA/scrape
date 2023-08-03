@@ -191,12 +191,15 @@ def season_page(url, conf, b):
                 By.XPATH, './/div[@class="episode_title"]/div[1]/div[1]/div[1]'
             ).text
         )
-        episode["release_date"] = parse_date(
+        try:
+            episode["release_date"] = parse_date(
             e.find_element(
                 By.XPATH,
                 './/div[@class="episode_title"]//div[@class="date"]/span[@class="date"]',
             ).text
         )
+        except exceptions.NoSuchElementException:
+            pass
         try:
             episode["runtime_in_minutes"] = (
                 parse_duration(
