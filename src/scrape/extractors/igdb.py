@@ -7,6 +7,7 @@ from ..val import (
     handle_media_url,
     get_webdriver,
     scrollToEnd,
+    try_int,
 )
 
 
@@ -112,20 +113,13 @@ def igdb_game(url: str, conf) -> dict:
         printwarn("Unable to get publishers")
 
     info["ratings"] = {}
-    try:
-        ratings = b.find_element(
-            By.XPATH, '//*[@class="gamepage-gauge"]'
-        ).find_elements(By.TAG_NAME, "text")
-        try:
-            info["ratings"]["member"] = int(ratings[0].text)
-        except:
-            pass
-        try:
-            info["ratings"]["critic"] = critic_rating = int(ratings[2].text)
-        except:
-            pass
-    except:
-        printwarn("Unable to get ratings")
+    ratings = b.find_element(By.XPATH, '//*[@class="gamepage-gauge"]').find_elements(
+        By.TAG_NAME, "text"
+    )
+    ratings_txt = list(map(lambda x: x.text, ratings))
+    ratings_txt = list(filter(lambda x: x.isdigit() or x == "N/A", ratings_txt))
+    info["ratings"]["member"] = None if ratings_txt[0] == "N/A" else int(ratings_txt[0])
+    info["ratings"]["critic"] = None if ratings_txt[1] == "N/A" else int(ratings_txt[1])
 
     try:
         time_to_beat_data = b.find_element(

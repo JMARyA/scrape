@@ -280,6 +280,13 @@ def parse_duration(s: str) -> timedelta:
     return None
 
 
+def try_int(text):
+    try:
+        return int(text)
+    except ValueError:
+        return None
+
+
 def scrollToEnd(b):
     """
     Scrolls to the end of the page
