@@ -2,7 +2,7 @@ from urllib.parse import urlparse
 import json
 from rich import print
 import sys
-from . import igdb, steam, aur, amazon, postman, anisearch, tmdb
+from . import igdb, steam, aur, amazon, postman, anisearch, tmdb, mediamarkt
 from ..val import Language, printerr, printwarn
 from enum import Enum
 import datetime
@@ -35,6 +35,7 @@ class SupportedSites(Enum):
     POSTMAN = "tracker2.postman.i2p"
     ANISEARCH = "www.anisearch.com"
     TMDB = "www.themoviedb.org"
+    MEDIAMARKT = "www.mediamarkt.de"
 
 
 def language_ignored_warn(conf):
@@ -72,6 +73,9 @@ def scrape_site(url: str, conf):
         case SupportedSites.TMDB.value:
             language_ignored_warn(conf)
             data = tmdb.tv(url, conf)
+        case SupportedSites.MEDIAMARKT.value:
+            language_ignored_warn(conf)
+            data = mediamarkt.product(url, conf)
         case _:
             printerr("Unknown site")
             exit(1)

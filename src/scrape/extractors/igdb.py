@@ -7,7 +7,6 @@ from ..val import (
     handle_media_url,
     get_webdriver,
     scrollToEnd,
-    try_int,
 )
 
 

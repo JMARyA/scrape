@@ -1,15 +1,8 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common import exceptions
-from datetime import datetime
-import locale
-from urllib.parse import urlparse, urlencode, urlunparse, parse_qsl
-from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support import expected_conditions as EC
 from ..val import (
-    currency,
-    Language,
-    printinfo,
     get_webdriver,
     handle_media_url,
     scrollToElement,

@@ -10,3 +10,4 @@ Scrape is a tool to scrape websites and turn their data into JSON. Like yt-dlp, 
 - Postman
 - Anisearch (WIP)
 - TMDB (WIP)
+- Mediamarkt
