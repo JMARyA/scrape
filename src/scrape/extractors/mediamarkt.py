@@ -24,7 +24,7 @@ def product(url: str, conf) -> dict:
         '//div[@data-test="mms-select-details-header"]//p[@font-family="default"]',
     )
     ratings = re.findall(r"[-+]?\d*\.\d+|\d+", product_info_elements[0].text)
-    data["rating"] = ratings[0]
+    data["rating"] = float(ratings[0])
     data["amount_of_ratings"] = ratings[1]
 
     data["product_number"] = product_info_elements[1].text.replace("Art.-Nr. ", "")
