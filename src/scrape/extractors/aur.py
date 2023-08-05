@@ -58,8 +58,13 @@ def aur_package(url: str, conf) -> dict:
 
     dependencies = []
     dependency_items = b.find_element(By.XPATH, '//*[@id="pkgdepslist"]')
+    deps = dependency_items.find_elements(By.TAG_NAME, "li")
+    if "Show " in deps[-1].text:
+        b.get(deps[-1].find_element(By.XPATH, "./a").get_attribute("href"))
+        dependency_items = b.find_element(By.XPATH, '//*[@id="pkgdepslist"]')
+        deps = dependency_items.find_elements(By.TAG_NAME, "li")
 
-    for dep in dependency_items.find_elements(By.TAG_NAME, "li"):
+    for dep in deps:
         dep_name = dep.find_element(By.TAG_NAME, "a").text
         dep_info = dep.find_elements(By.TAG_NAME, "em")[-1].text
         dependencies.append({"name": dep_name, "info": dep_info})
