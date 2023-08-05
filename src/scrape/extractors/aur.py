@@ -67,9 +67,15 @@ def aur_package(url: str, conf) -> dict:
     info["dependencies"] = dependencies
 
     required_by = []
-    required_by_items = b.find_element(By.XPATH, '//*[@id="pkgreqslist"]')
 
-    for req in required_by_items.find_elements(By.TAG_NAME, "li"):
+    required_by_items = b.find_element(By.XPATH, '//*[@id="pkgreqslist"]')
+    reqs = required_by_items.find_elements(By.TAG_NAME, "li")
+    if "Show " in reqs[-1].text:
+        b.get(reqs[-1].find_element(By.XPATH, "./a").get_attribute("href"))
+        required_by_items = b.find_element(By.XPATH, '//*[@id="pkgreqslist"]')
+        reqs = required_by_items.find_elements(By.TAG_NAME, "li")
+
+    for req in reqs:
         req_name = req.find_element(By.TAG_NAME, "a").text
         req_info = req.find_elements(By.TAG_NAME, "em")[-1].text
         required_by.append(
