@@ -111,13 +111,19 @@ def igdb_game(url: str, conf) -> dict:
     except:
         printwarn("Unable to get publishers")
 
+    info["ratings"] = {}
     try:
         ratings = b.find_element(
             By.XPATH, '//*[@class="gamepage-gauge"]'
         ).find_elements(By.TAG_NAME, "text")
-        member_rating = int(ratings[0].text)
-        critic_rating = int(ratings[2].text)
-        info["ratings"] = ({"member": member_rating, "critic": critic_rating},)
+        try:
+            info["ratings"]["member"] = int(ratings[0].text)
+        except:
+            pass
+        try:
+            info["ratings"]["critic"] = critic_rating = int(ratings[2].text)
+        except:
+            pass
     except:
         printwarn("Unable to get ratings")
 
